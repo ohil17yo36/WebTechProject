@@ -90,6 +90,7 @@ print matchedTree2
 
 for i in range(len(matchedTree1)):
     # print "#######"
+    #
     print nodes1[matchedTree1[i]].attrib, nodes1[matchedTree1[i]].tag
     print nodes2[matchedTree2[i]].attrib, nodes2[matchedTree2[i]].tag
 
