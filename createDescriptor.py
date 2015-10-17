@@ -2,21 +2,21 @@ from lxml import etree
 
 parser=etree.XMLParser(recover=True)
 
-tree1=etree.parse("sample.html",parser=parser)
+tree1=etree.parse("sample2.html",parser=parser)
 root1=tree1.getroot()
 desList1=[]
-desList1.append(0)
+#desList1.append(0)
 
-tree2=etree.parse("sample2.html",parser=parser)
+tree2=etree.parse("sample.html",parser=parser)
 root2=tree2.getroot()
 desList2=[]
-desList2.append(0)
+#desList2.append(0)
 
 nodes1 = []
-nodes1.append(0)
+#nodes1.append(0)
 
 nodes2 = []
-nodes2.append(0)
+#nodes2.append(0)
 
 def height(root, depth, desList, nodes):
 	if root is None:
@@ -30,6 +30,13 @@ def height(root, depth, desList, nodes):
 
 height(root1, 1, desList1, nodes1)
 height(root2, 1, desList2, nodes2)
+
+print desList1
+print desList2
+
+if len(desList2)<len(desList1):
+	desList1, desList2 = desList2, desList1
+	nodes1, nodes2 = nodes2, nodes1
 
 matchedTree1 = []
 matchedTree2 = []
@@ -88,11 +95,12 @@ i = 0
 print matchedTree1
 print matchedTree2
 
-for i in range(len(matchedTree1)):
-    # print "#######"
-    #
-    print nodes1[matchedTree1[i]].attrib, nodes1[matchedTree1[i]].tag
-    print nodes2[matchedTree2[i]].attrib, nodes2[matchedTree2[i]].tag
+if len(desList2)==1 or len(desList1)==1:
+	print 1 
+else:
+	for i in range(len(matchedTree1)):
+	    print nodes1[matchedTree1[i]].attrib, nodes1[matchedTree1[i]].tag
+	    print nodes2[matchedTree2[i]].attrib, nodes2[matchedTree2[i]].tag
 
-print ans 
+	print ans 
 
