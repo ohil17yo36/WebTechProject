@@ -5,18 +5,16 @@ parser=etree.XMLParser(recover=True)
 tree1=etree.parse("sample2.html",parser=parser)
 root1=tree1.getroot()
 desList1=[]
-#desList1.append(0)
 
 tree2=etree.parse("sample.html",parser=parser)
 root2=tree2.getroot()
 desList2=[]
-#desList2.append(0)
 
 nodes1 = []
-#nodes1.append(0)
-
 nodes2 = []
-#nodes2.append(0)
+
+diffarray1=[]
+diffarray2=[]
 
 def height(root, depth, desList, nodes):
 	if root is None:
@@ -31,45 +29,52 @@ def height(root, depth, desList, nodes):
 height(root1, 1, desList1, nodes1)
 height(root2, 1, desList2, nodes2)
 
-print desList1
-print desList2
+for i in range(0,len(desList1)-1):
+	diffarray1.append(desList1[i]-desList1[i+1])
+
+for i in range(0,len(desList2)-1):
+	diffarray2.append(desList2[i]-desList2[i+1])
 
 if len(desList2)<len(desList1):
 	desList1, desList2 = desList2, desList1
 	nodes1, nodes2 = nodes2, nodes1
+	diffarray1,diffarray2=diffarray2,diffarray1
+	
 
 matchedTree1 = []
 matchedTree2 = []
 
-def compare(subTree):
-	
-	j = 0
-	while j < len(desList2):
-		
-		dif = desList2[j] - subTree [0]
-		i = 1
-		p = j + 1
-		if p >= len(desList2):
-			break
-		
-		while i < len(subTree) and p < len(desList2):
-			if desList2[p] - subTree[i] == dif:
-				p = p + 1
-				i = i + 1
-				continue
-			else:
-				break
+def kmpPreCompute(pattern):
+	m=len(pattern)
+	pattern=[0]+pattern
+	pi=[0,0]
+	k=0
+	for q in range(2,m+1):
+		while k>0 and pattern[k+1]!=pattern[q]:
+			k=pi[k]
+		if(pattern[k+1]==pattern[q]):
+			k=k+1
+		pi.append(k)	
+	return pi
 
-		if i == len(subTree):
-			for k in range(j, p):
-				desList2[k] = -1
-			
-			matchedTree2.append(j)
-
+def kmp(pattern):
+	global diffarray2
+	n=len(diffarray2)
+	m=len(pattern)
+	pi=kmpPreCompute(pattern)
+	diffarray2=[0]+diffarray2
+	pattern=[0]+pattern
+	q=0
+	for i in range(1,n+1):
+		while q>0 and pattern[q+1]!=diffarray2[i]:
+			q=pi[q]
+		if pattern[q+1]==diffarray2[i]:
+			q=q+1
+		if q==m:
+			diffarray2=diffarray2[1:i-m+1]+diffarray2[i+1:n+1]
+			matchedTree2.append(i-m)
 			return True
-		j = j + 1
-
-	return False
+	return False					
 
 i = 0
 j = 0
@@ -83,10 +88,12 @@ while i < len(desList1):
 		subTree.append(desList1[j])
 		j = j + 1
 
-	if j > i + 1 and compare(subTree): 
-		ans = max(ans, len(subTree))
-		matchedTree1.append(i)
-		i = j
+	if len(subTree)>1:
+		pattern=diffarray1[i:j-1]
+		if kmp(pattern): 
+			ans = max(ans, len(subTree))
+			matchedTree1.append(i)
+			i = j
 	else:
 		i = i + 1
 
@@ -102,5 +109,4 @@ else:
 	    print nodes1[matchedTree1[i]].attrib, nodes1[matchedTree1[i]].tag
 	    print nodes2[matchedTree2[i]].attrib, nodes2[matchedTree2[i]].tag
 
-	print ans 
-
+	print ans
