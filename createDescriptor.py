@@ -75,7 +75,7 @@ def kmp(pattern):
 		if pattern[q+1]==diffarray2[i]:
 			q=q+1
 		if q==m:
-			diffarray2=diffarray2[1:i-m+1]+diffarray2[i+1:n+1] # The diffarray2 is spliced to exclude the part of the text that has been matched with the pattern.This is equivalent to replacing matched characters with -1.
+			diffarray2=diffarray2[1:i-m+1]+[-1]*m+diffarray2[i+1:n+1] # The diffarray2 is spliced to exclude the part of the text that has been matched with the pattern.This is equivalent to replacing matched characters with -1.
 			matchedTree2.append(i-m)#The start index of the text which matches the pattern
 			return True
 	return False					
